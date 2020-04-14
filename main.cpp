@@ -65,10 +65,10 @@ int main(){
 	cout << "I (Simpson, e = 0.0001) = " << simpson(A, 0.0001) << endl;
 	ofstream fout;
 	fout.open("ans1.dat");
-	fout << simpson(A, 0.0001);
+	fout << simpson(A, 0.0001) << ", " << 0.0001 ;
 	fout.close();
 	fout.open("ans2.dat");
-	fout << pryam(A);
+	fout << pryam(A)<< ", " << 0.0001 ;
 	fout.close();
 	return 0;
 	}
