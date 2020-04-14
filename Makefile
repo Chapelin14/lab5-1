@@ -3,4 +3,5 @@ all:
 	
 run:
 	main
-	
+run:
+	main.py	
