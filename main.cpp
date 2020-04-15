@@ -76,7 +76,7 @@ int main(){
 		
 		double divsimp = Simpson(a, b, h); 
 		
-		errrect = abs(simp - divsimp)/12.; // âû÷èñëÿåì ïîãðåøíîñòü
+		errrect = abs(simp - divsimp)/12.;
 	} while (errrect > 1e-5);
 	outf.open("ans2.dat", ios_base::out);
 	outf << "Integral = " << Simpson(a, b, h) << " " <<"Error = " << errrect << "\n";
