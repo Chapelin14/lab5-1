@@ -3,44 +3,55 @@ import math
 def f(x) :
     return math.exp(-(1/(x*x)))/(x*x)
 
-def simpson(A, eps) :
-    a = A
-    b = 1.5
-    I=eps+1
-    I1=0
-    N=2
-    while N<=4 or math.fabs(I1-I)>eps :
-        sum2 = 0
-        sum4 = 0
-        sum = 0
-        h=(b-a)/(2*N)
-        i=1
-        while i <= 2*N-1 :
-            sum4 += f(a+h*i)
-            sum2 += f(a+h*(i+1))
-            i += 2
-        sum = f(a)+4*sum4+2*sum2-f(b)
-        I=I1
-        I1=(h/3)*sum
-        N *= 2
-    return I1
-
-def pryam(A, n) :
-    b = 1.5
-    a = A
-    n = int(n)
-    s = (f(a)+f(b))/2
-    h = (b-a)/n
+def Simpson(a, b, h) :
+    sum = f(a) + f(b)
     i = 1
-    while i<=n-1 :
-        s += f(a+i*h)
+    x = a + h
+    while x < b - h :
+        if i%2 != 0 :
+            sum += 4*f(x)
+        else :
+            sum += 2*f(x)
+        x += h
         i += 1
-    l=h*s
-    return l
+    return h*sum/3.
 
-A = (4*0.0001)**(1/4)
+def rectangles(a, b, h) :
+    sum = 0
+    x = a + h * 0.5
+    while x < b :
+        sum += f(x)
+        x += h
+    sum *= h
+    return sum
+
+
+
+
+A = (4*0.0001)**(1/4
 print("A = ", A)
-print("I (Simpson, eps = 0.0001) = ", simpson(A, 0.0001))
-print("Enter count of rectangles. N = ")
-n=input()
-print("I (Rectangles, N >= 100) = ", pryam(A,n))
+print("Check: e^-", A, " = ", math.exp(-A))
+a = 1
+b = A
+h = 0.00005
+simp = Simpson(a, b , h)
+h /= 2
+divsimp = Simpson(a, b, h)
+err_val = math.fabs(simp - divsimp)/12.
+while err_val > 0.001 :
+    simp = Simpson(a, b , h)
+    h /= 2
+    divsimp = Simpson(a, b, h)
+    err_val = math.fabs(simp - divsimp)/12
+print("I (w eps =< 0.001) = ", Simpson(a, b, h), " Error: ", err_val)
+rect = rectangles(a, b, h)
+h /= 2
+divrect = rectangles(a, b ,h)
+err_val = math.fabs(rect - divrect)/4.
+while err_val > 0.001 :
+    rect = rectangles(a, b, h)
+    h /= 2
+    divrect = rectangles(a, b ,h)
+    err_val = math.fabs(rect - divrect)/4.
+print("I (w eps =< 0.001) = ", rectangles(a, b, h), " Error: ", err_val)
+input()
