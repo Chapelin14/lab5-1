@@ -10,39 +10,29 @@ double g(double x){
 	return pow(x,3);
 }
 
-double simpson(double A, double eps) {
-	double a, b;
-	a = A;
-	b = 1.5;
-	double I=eps+1, I1=0;
-	for (int N=2; (N<=4) || (fabs(I1-I)>eps); N*=2){
-		double h, sum2=0, sum4=0, sum=0;
-		h=(b-a)/(2*N);
-		for(int i=1; i<=2*N-1;i+=2){
-			sum4+=f(a+h*i);
-			sum2+=f(a+h*(i+1));
-			}
-		sum=f(a)+4*sum4+2*sum2-f(b);
-		I=I1;
-		I1=(h/3)*sum;
-		}
-	return abs(I1);
+double Simpson(double a, double b, double h)
+{
+	double sum = f(a) + f(b);
+	double x;
+	int i = 1;
+	for(x = a + h; x < b - h; x += h){
+		if(i%2 != 0)
+			sum += 4*f(x);
+		else
+			sum += 2*f(x);
+		i++;
+	}
+	return h*sum/3.;
 }
 
-double pryam(double A) {
-	double b = 1.5;
-	double a = A;
-	cout << "Enter the count of rectangle  >=100): ";
-	int n;
-	cin >> n;
-	double s = (f(a)+f(b))/2;
-	double h=(b-a)/n;
-	for(int i = 1; i<=n-1; i++){
-		s+=f(a+i*h);
-	}
-	double l=h*s;
-	cout<< "I (Rectangles ," << n << ") = " << l <<endl;
-	return l;
+double rectangles(double a, double b, double h)
+{
+	double sum = 0;
+	double x;
+	for(x = a + h * 0.5; x < b; x += h)
+		sum += f(x);
+	sum *= h;
+	return sum;
 }
 
 int main(){
@@ -60,15 +50,36 @@ int main(){
 			break;
 		}
 	}
-	double A = pow(0.0004,0.25);
-	cout << "A= " << A << endl;
-	cout << "I (Simpson, e = 0.0001) = " << simpson(A, 0.0001) << endl;
-	ofstream fout;
-	fout.open("ans1.dat");
-	fout << simpson(A, 0.0001) << ", " << 0.0001 ;
-	fout.close();
-	fout.open("ans2.dat");
-	fout << pryam(A)<< ", " << 0.0001 ;
-	fout.close();
+	double a = pow(0.0004,0.25);
+	cout << "A= " << a << endl;
+	double b = 1.5; 
+    double h = 0.00005;
+	double errrect;
+		do {
+		double rect = rectangles(a, b, h);
+		
+		h /= 2;
+		
+		double divrect = rectangles(a, b, h); 
+		
+		errrect = abs(rect - divrect)/4.;
+	} while (errrect > 1e-4);
+	ofstream outf;
+    outf.open("ans1.dat", ios_base::out);
+	outf << "Integral = " << rectangles(a, b, h) << " " <<"Error = " << errrect << "\n";
+	outf.close();
+	
+	do {
+		double simp = Simpson(a, b, h);
+		
+		h /= 2;
+		
+		double divsimp = Simpson(a, b, h); 
+		
+		errrect = abs(simp - divsimp)/12.; // âû÷èñëÿåì ïîãðåøíîñòü
+	} while (errrect > 1e-5);
+	outf.open("ans2.dat", ios_base::out);
+	outf << "Integral = " << Simpson(a, b, h) << " " <<"Error = " << errrect << "\n";
+    outf.close();
 	return 0;
-	}
+}
